@@ -177,9 +177,9 @@ void tree_preorder(tree b, void f(int frequency, char *str)) {
     tree_preorder(b->right, f);
 }
 
-tree setColourBlack(tree r) {
-    r->colour = BLACK;
-    return r;
+tree setColourBlack(tree b) {
+    b->colour = BLACK;
+    return b;
 }
 
 tree tree_free(tree b) {
