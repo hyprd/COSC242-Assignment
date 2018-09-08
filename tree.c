@@ -46,16 +46,16 @@ static tree right_rotate(tree b) {
 
 
 tree tree_new(tree_t type) {
-    tree r = emalloc(sizeof(struct tree_node));
-    r->key = NULL;
-    r->left = NULL;
-    r->right = NULL;
+    tree b = emalloc(sizeof(struct tree_node));
+    b->key = NULL;
+    b->left = NULL;
+    b->right = NULL;
     tree_type = type;
 
-    r->colour = RED;
-    r->frequency = 0;
+    b->colour = RED;
+    b->frequency = 0;
     
-    return r;
+    return b;
 }
 
 tree tree_fix(tree b){
