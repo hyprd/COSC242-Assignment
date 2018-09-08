@@ -46,16 +46,16 @@ static tree right_rotate(tree b) {
 
 
 tree tree_new(tree_t type) {
-    tree b = emalloc(sizeof(struct tree_node));
-    b->key = NULL;
-    b->left = NULL;
-    b->right = NULL;
+    tree r = emalloc(sizeof(struct tree_node));
+    r->key = NULL;
+    r->left = NULL;
+    r->right = NULL;
     tree_type = type;
 
-    b->colour = RED;
-    b->frequency = 0;
+    r->colour = RED;
+    r->frequency = 0;
     
-    return b;
+    return r;
 }
 
 tree tree_fix(tree b){
@@ -201,7 +201,7 @@ tree tree_free(tree b) {
  * @param t the tree to output a DOT description of.
  * @param out the stream to write the DOT output to.
  */
-static void tree_output_dot_aux(tree t, FILE *out) {
+void tree_output_dot_aux(tree t, FILE *out) {
     if(t->key != NULL) {
         fprintf(out, "\"%s\"[label=\"{<f0>%s:%d|{<f1>|<f2>}}\"color=%s];\n",
                 t->key, t->key, t->frequency,
@@ -234,11 +234,3 @@ void tree_output_dot(tree t, FILE *out) {
     tree_output_dot_aux(t, out);
     fprintf(out, "}\n");
 }
-
-
-
-
-
-
-
-
