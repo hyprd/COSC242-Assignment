@@ -1,10 +1,10 @@
-#ifndef mylib_h
-#define mylib_h
+#ifndef MYLIB_H_
+#define MYLIB_H_
 
 #include <stddef.h>
-#include <stdio.h>
 
-extern void *emalloc(size_t);
-extern void *remalloc(void *, size_t);
+extern int getword(char *s, int limit, FILE *stream);
+extern void *emalloc(size_t s);
+extern void *erealloc(void *ptr, size_t s);
 
-#endif /* mylib_h */
+#endif
