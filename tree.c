@@ -62,22 +62,27 @@ tree tree_fix(tree b){
 
     if(IS_RED(b->left) && IS_RED(b->left->left)){
         if (IS_RED(b->right)){
+            /*colour root as red and children a and b black*/
             b->colour = RED;
             b->left->colour = BLACK;
             b->right->colour = BLACK;
-        }else{
+        }else if(IS_BLACK(b->right)){
+            /*right rotate root , colour new root (a) black,
+             * and new child(old root) red*/
             b = right_rotate(b);
             b->colour = BLACK;
-            b->right->colour = RED;
+            b->right->colour = RED;/* Old root*/
         }
     }
 
     else if(IS_RED(b->left) && IS_RED(b->left->right)){
         if (IS_RED(b->right)){
+            /*colours root red and children a,b as black*/
             b->colour = RED;
             b->left->colour = BLACK;
             b->right->colour = BLACK;
-        }else{
+        }
+        else if(IS_BLACK(b->right)){
             b->left = left_rotate(b->left);
             b = right_rotate(b);
             b->colour = BLACK;
@@ -90,11 +95,11 @@ tree tree_fix(tree b){
             b->colour = RED;
             b->left->colour = BLACK;
             b->right->colour = BLACK;
-        }else{
+        }else if(IS_BLACK(b->left)){
             b->right = right_rotate(b->right);
             b = left_rotate(b);
             b->colour = BLACK;
-            b->right->colour= RED;
+            b->left->colour= RED;
         }
     }
 
@@ -110,6 +115,35 @@ tree tree_fix(tree b){
         }
     }
 
+    return b;
+}
+
+tree tree_insert(tree b, char *str) {
+    int cmp;
+    if (b == NULL) {
+        b = tree_new(tree_type);
+    }
+    
+    if (b->key == NULL) {
+        b->key = emalloc(sizeof(char) * (strlen(str) + 1));
+        strcpy(b->key, str);
+        b->frequency = 1;
+        return b;
+    }
+    
+    cmp = strcmp(str, b->key);
+    if (cmp < 0) {
+        b->left = tree_insert(b->left, str);
+    } else if (cmp > 0) {
+        b->right = tree_insert(b->right, str);
+    } else if (cmp == 0) {
+        b->frequency += 1;
+    }
+    
+    if (tree_type == RBT) {
+        b = tree_fix(b);
+    }
+    
     return b;
 }
 
