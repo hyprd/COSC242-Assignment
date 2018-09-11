@@ -6,6 +6,8 @@
 #include "tree.h"
 #include "mylib.h"
 
+#define WORD_MAX 100
+
 typedef enum datastructure {TREE, HTABLE} datastructure_t;
 
 /**
@@ -52,6 +54,39 @@ static void print_help() {
     printf("HELP MESSAGE XD\n");
 }
 
+static void spellcheck(htable h, tree t,
+                       char *word, FILE *file_to_check,
+                       double fill_start, double fill_end) {
+    int unknown_words = 0;
+    clock_t search_start, search_end;
+    
+    if (h != NULL) {
+        search_start = clock();
+        while (getword(word, sizeof word, file_to_check) != EOF) {
+            if (htable_search(h, word) == 0) {
+                printf("%s\n", word);
+                unknown_words++;
+            }
+        }
+        search_end = clock();
+    } else {
+        search_start = clock();
+        while (getword(word, sizeof word, file_to_check) != EOF) {
+            if (tree_search(t, word) == 0) {
+                printf("%s\n", word);
+                unknown_words++;
+            }
+        }
+        search_end = clock();
+    }
+
+    fprintf(stderr, "Fill time\t: %8.7f\n",
+            (fill_end - fill_start) / (double) CLOCKS_PER_SEC);
+    fprintf(stderr, "Search time\t: %8.7f\n",
+            (search_end - search_start) / (double) CLOCKS_PER_SEC);
+    fprintf(stderr, "Unknown words = %d\n", unknown_words);
+}
+
 int main(int argc, char **argv) {
     const char *optstring = "Tc:deoprs:t:h";
     char option;
@@ -60,8 +95,8 @@ int main(int argc, char **argv) {
     FILE *tree_view = NULL;
     hashing_t hashing_method = LINEAR_P;
     tree_t tree_type = BST;
-    int htable_capacity = 113, snapshots = 10;
-
+    int htable_capacity = 113, snapshots = 10, help = 0, print_stats = 0, print_entire_table = 0;
+    
     while ((option = getopt(argc, argv, optstring)) != EOF) {
         switch (option) {
             case 'T':
@@ -83,7 +118,7 @@ int main(int argc, char **argv) {
                 break;
             case 'e':
                 if (datastructure == HTABLE) {
-                    htable_print_entire_table(h);
+                    print_entire_table = 1;
                 }
                 break;
             case 'o':
@@ -94,11 +129,13 @@ int main(int argc, char **argv) {
                         fprintf(stderr, "Failed to open file: %s\n", optarg);
                         return EXIT_FAILURE;
                     }
+
+                    /* No tree_output_dot() because tree doesn't exist yet */
                 }
                 break;
             case 'p':
                 if (file_to_check == NULL && datastructure == HTABLE) {
-                    /* print-stats.txt*/
+                    print_stats = 1;
                 }
                 break;
             case 'r':
@@ -117,45 +154,77 @@ int main(int argc, char **argv) {
                 }
                 break;
             case 'h':
+                help = 1;
+                print_help();
+                break;
+            default:
+                help = 1;
                 print_help();
                 break;
         }
     }
 
-    if (datastructure = HTABLE) { /* HASH TABLE */
-        char *word;
-        int unknown_words = 0, i;
-        clock_t fill_start, fill_end, search_start, search_end;
-        htable h = htable_new(htable_capacity, hashing_method);
-
-        fill_start = clock();
-        while (getword(word, sizeof word, stdin) != EOF) {
-            htable_insert(h, word);
-        }
-        fill_end = clock();
-
+    if (help == 0) { /* If no errors in options and -h is NOT selected */
+        char word[WORD_MAX];
+        clock_t fill_start, fill_end;
         
+        if (datastructure == HTABLE) { /* HASH TABLE */
+            htable h = htable_new(htable_capacity, hashing_method);
 
-        if (file_to_check != NULL) { /* -c filename AND NOT -o or -p */
-            search_start = clock();
-            while (getword(word, sizeof word, file_to_check) != EOF) {
-                if (htable_search(h, word) == 0) {
-                    printf("%s\n", word);
-                    unknown_words++;
+            fill_start = clock();
+            while (getword(word, sizeof word, stdin) != EOF) {
+                htable_insert(h, word);
+            }
+            fill_end = clock();
+
+            /*
+               Seems silly to have this separate to the
+               if - else if - else block, but this makes
+               it consistent with the sample asgn.
+            */
+            if (print_entire_table == 1) {
+                htable_print_entire_table(h, stdout);
+            }
+
+            if (file_to_check != NULL) { /* -c filename AND NOT -p */
+                spellcheck(h, NULL, word, file_to_check, fill_start, fill_end);
+            } else if (print_stats == 1) {
+                snapshots = (snapshots > 0) ? snapshots : 0;
+                htable_print_stats(h, stdout, snapshots);
+            } else { /* No overriding opts so print normally. */
+                htable_print(h, print_info);
+            }
+
+            htable_free(h);
+        } else { /* TREES */
+            tree t = tree_new(tree_type);
+
+            fill_start = clock();
+            while (getword(word, sizeof word, stdin) != EOF) {
+                tree_insert(t, word);
+            }
+            fill_end = clock();
+
+            if (file_to_check != NULL) { /* -c filename AND NOT -o */
+                spellcheck(NULL, t, word, file_to_check, fill_start, fill_end);
+            } else {
+                tree_preorder(t, print_info);
+                if (tree_view != NULL) {
+                    tree_output_dot(t, tree_view);
+                    printf("Creating dot file 'tree-view.dot'\n");
                 }
             }
-            search_end = clock();
 
-            fprintf(stderr, "Fill time\t: %8.7f\n",
-                    (fill_start - fill_end) / (double) CLOCKS_PER_SEC);
-            fprintf(stderr, "Search time\t: %8.7f\n",
-                    (search_start - search_end) / (double) CLOCKS_PER_SEC);
-            fprintf(stderr, "Unknown words = %d\n", unknown_words);
-        } else { /* NO -c filename so print normally */
-            htable_print(h, print_info);
+            tree_free(t);
         }
-    } else { /* TREES */
-        
+    }
+
+    if (file_to_check != NULL) {
+        fclose(file_to_check);
+    }
+
+    if (tree_view != NULL) {
+        fclose(tree_view);
     }
 
     return EXIT_SUCCESS;
