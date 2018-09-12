@@ -4,6 +4,14 @@
 #include <stdlib.h>
 #include "mylib.h"
 
+/* 
+ * Retrieves a word from a file. Repeat until no words await reading
+ * in the file.
+ * @param s a character to be read in 
+ * @param limit word check boundary
+ * @param stream the file to read values from  
+ * @return a word from the file 
+ */
 int getword(char *s, int limit, FILE *stream) {
     int c;
     char *w = s;
@@ -30,7 +38,10 @@ int getword(char *s, int limit, FILE *stream) {
     *w = '\0';
     return w - s;
 }
-
+/* 
+ * Memory allocation function.
+ * @param s the size of memory for malloc to allocate
+ */
 void *emalloc(size_t s) {
     void *out = malloc(s);
 
@@ -41,7 +52,11 @@ void *emalloc(size_t s) {
 
     return out;
 }
-
+/* 
+ * Memory reallocation function. 
+ * @param ptr a pointer for an object requiring reallocation 
+ * @param s the size of memory for realloc to reallocate
+ */
 void *erealloc(void *ptr, size_t s) {
     void *out = realloc(ptr, s);
 

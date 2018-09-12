@@ -10,11 +10,11 @@
 
 typedef enum datastructure {TREE, HTABLE} datastructure_t;
 
-/**
-*Checks if a number is prime.
-*@param n number to check
-*@return whether n is prime
-*/
+/*
+ * Checks if a number given by the user is a prime number.
+ * @param n a number to check
+ * @return an integer indicating whether or not the number is a prime number
+ */
 int is_prime(int n) {
     int i;
 
@@ -31,10 +31,10 @@ int is_prime(int n) {
     return 1;
 }
 
-/**
- *Returns the next highest prime greater than i.
- *@param i base number
- *@return next highest prime
+/*
+ * Returns the next highest prime greater than a given value.
+ * @param i the base number
+ * @return the next highest prime
  */
 int next_highest_prime(int i) {
     int j;
@@ -46,14 +46,31 @@ int next_highest_prime(int i) {
     }
 }
 
+/* 
+ * Print words added to the data structure alongside their frequencies.
+ * @param frequency the frequency of a user-given word
+ * @param word a word to print information about
+ */
 static void print_info(int freq, char *word) {
     printf("%-4d %s\n", freq, word);
 }
 
+/*
+ * Generate a text block for message help within the terminal.
+ */
 static void print_help() {
     printf("HELP MESSAGE XD\n");
 }
 
+/* 
+ * Check the spelling of a word.
+ * @param h a given hash table
+ * @param t a given tree type
+ * @param word a word for checking
+ * @param file_to_check a file for spelling checking
+ * @param fill_start The start time for filling
+ * @param fill_end The end time for filling
+ */
 static void spellcheck(htable h, tree t,
                        char *word, FILE *file_to_check,
                        double fill_start, double fill_end) {
@@ -96,7 +113,7 @@ int main(int argc, char **argv) {
     hashing_t hashing_method = LINEAR_P;
     tree_t tree_type = BST;
     int htable_capacity = 113, snapshots = 10, help = 0, print_stats = 0, print_entire_table = 0;
-    
+    /* Statements here represent command-line arguments with corresponding actions */
     while ((option = getopt(argc, argv, optstring)) != EOF) {
         switch (option) {
             case 'T':

@@ -2,7 +2,7 @@
 #define HTABLE_H_
 
 #include <stdio.h>
-
+/* Header file for hash table implementation */
 typedef struct htablerec *htable;
 typedef enum hashing_e {LINEAR_P, DOUBLE_H} hashing_t;
 
