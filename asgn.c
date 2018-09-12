@@ -8,11 +8,11 @@
 
 typedef enum datastructure {TREE, HTABLE} datastructure_t;
 
-/**
-*Checks if a number is prime.
-*@param n number to check
-*@return whether n is prime
-*/
+/*
+ * Checks if a number given by the user is a prime number.
+ * @param n a number to check
+ * @return an integer indicating whether or not the number is a prime number
+ */
 int is_prime(int n) {
     int i;
 
@@ -29,10 +29,10 @@ int is_prime(int n) {
     return 1;
 }
 
-/**
- *Returns the next highest prime greater than i.
- *@param i base number
- *@return next highest prime
+/*
+ * Returns the next highest prime greater than a given value.
+ * @param i the base number
+ * @return the next highest prime
  */
 int next_highest_prime(int i) {
     int j;
@@ -44,10 +44,18 @@ int next_highest_prime(int i) {
     }
 }
 
+/* 
+ * Print words added to the data structure alongside their frequencies.
+ * @param frequency the frequency of a user-given word
+ * @param word a word to print information about
+ */
 static void print_info(int freq, char *word) {
     printf("%-4d %s\n", freq, word);
 }
 
+/*
+ * Generate a text block for message help within the terminal.
+ */
 static void print_help() {
     printf("HELP MESSAGE XD\n");
 }
@@ -62,6 +70,7 @@ int main(int argc, char **argv) {
     tree_t tree_type = BST;
     int htable_capacity = 113, snapshots = 10;
 
+    /* Statements here represent command-line arguments with corresponding actions */
     while ((option = getopt(argc, argv, optstring)) != EOF) {
         switch (option) {
             case 'T':
@@ -121,8 +130,8 @@ int main(int argc, char **argv) {
                 break;
         }
     }
-
-    if (datastructure = HTABLE) { /* HASH TABLE */
+    /* Hash Table generation */
+    if (datastructure = HTABLE) { 
         char *word;
         int unknown_words = 0, i;
         clock_t fill_start, fill_end, search_start, search_end;

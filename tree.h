@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 
+/* Header file for tree implementation */
 typedef struct tree_node *tree;
 typedef enum { RED, BLACK } tree_colour;
 typedef enum tree_e { BST, RBT } tree_t;
