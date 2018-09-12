@@ -201,7 +201,7 @@ int main(int argc, char **argv) {
 
             fill_start = clock();
             while (getword(word, sizeof word, stdin) != EOF) {
-                tree_insert(t, word);
+                t = tree_insert(t, word);
             }
             fill_end = clock();
 
